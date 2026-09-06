@@ -1,0 +1,6 @@
+# app-ads.txt — authorised digital sellers for Fahreddin Sevindir's mobile apps
+# https://iabtechlab.com/app-ads-txt/
+#
+# Declared developer website for the apps below; AdMob crawls this file from the
+# root of that domain to verify that the ad inventory is authorised.
+google.com, pub-7518132497219948, DIRECT, f08c47fec0942fa0
