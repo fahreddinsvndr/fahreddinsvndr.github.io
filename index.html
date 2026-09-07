@@ -3,31 +3,203 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fahreddin Sevindir — Apps</title>
+<title>Recur — Subscription Tracker</title>
+<meta name="description" content="Recur is a calm, manual subscription tracker for iOS and Android. See what your subscriptions really cost, and get warned before they renew.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Urbanist:wght@600;700&display=swap">
 <style>
-  :root { color-scheme: light dark; }
-  body {
-    margin: 0; padding: 48px 20px;
-    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #f5f6f8; color: #14171f;
+  :root {
+    --bg: hsl(220 24% 96%);
+    --fg: hsl(222 39% 13%);
+    --muted-fg: hsl(217 18% 37%);
+    --primary: hsl(213 82% 31%);
+    --primary-soft: hsl(213 82% 96%);
+    --border: hsl(219 18% 83%);
+    --card: hsl(220 30% 99%);
+    --shadow: 0 18px 40px -28px hsl(222 39% 13% / 0.45);
+    --display: "Urbanist", ui-sans-serif, system-ui, sans-serif;
+    --sans: "Manrope", ui-sans-serif, system-ui, -apple-system, sans-serif;
   }
-  @media (prefers-color-scheme: dark) { body { background: #101319; color: #edeff3; } }
-  main { max-width: 640px; margin: 0 auto; }
-  h1 { font-size: 28px; letter-spacing: -0.02em; margin: 0 0 8px; }
-  p { margin: 0 0 24px; opacity: 0.75; }
-  ul { list-style: none; padding: 0; margin: 0; }
-  li { padding: 14px 0; border-top: 1px solid rgba(128,128,128,0.25); }
-  a { color: inherit; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: hsl(228 16% 8%);
+      --fg: hsl(210 20% 98%);
+      --muted-fg: hsl(215 18% 69%);
+      --primary: hsl(213 80% 46%);
+      --primary-soft: hsl(213 40% 16%);
+      --border: hsl(225 12% 28%);
+      --card: hsl(225 15% 12%);
+      --shadow: 0 18px 40px -28px hsl(0 0% 0% / 0.7);
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 400 16px/1.65 var(--sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 720px; margin: 0 auto; padding: 72px 24px 96px; }
+  h1, h2 { font-family: var(--display); letter-spacing: -0.025em; text-wrap: balance; }
+  h1 { font-size: 40px; font-weight: 700; margin: 0 0 10px; }
+  h2 { font-size: 21px; font-weight: 600; margin: 0 0 14px; }
+  p { margin: 0 0 18px; }
+  a { color: var(--primary); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+  a:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; border-radius: 4px; }
+  .lede { font-size: 18.5px; color: var(--muted-fg); max-width: 56ch; margin-bottom: 28px; }
+  .mark {
+    display: flex; align-items: center; gap: 13px; margin-bottom: 30px;
+  }
+  .mark span {
+    width: 46px; height: 46px; border-radius: 13px; flex: none;
+    background: var(--primary); color: #fff;
+    display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 23px;
+  }
+  .mark b { font-family: var(--display); font-size: 17px; font-weight: 600; }
+  .mark i { display: block; font-style: normal; font-size: 13px; color: var(--muted-fg); }
+  .stores { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 56px; }
+  .stores a {
+    display: inline-block; padding: 11px 20px; border-radius: 999px;
+    background: var(--primary); color: #fff; font-weight: 600; font-size: 14.5px;
+    text-decoration: none;
+  }
+  .stores a.alt { background: transparent; color: var(--fg); border: 1px solid var(--border); }
+  section { margin-bottom: 52px; }
+  .grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+  .item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 18px 19px; box-shadow: var(--shadow);
+  }
+  .item h3 { margin: 0 0 5px; font-size: 15px; font-weight: 700; }
+  .item p { margin: 0; font-size: 14.2px; color: var(--muted-fg); line-height: 1.55; }
+  .tiers { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+  .tier { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+  .tier.paid { border-color: var(--primary); background: var(--primary-soft); }
+  .tier h3 { margin: 0 0 3px; font-family: var(--display); font-size: 17px; font-weight: 600; }
+  .tier .price { font-size: 13px; color: var(--muted-fg); margin: 0 0 13px; }
+  .tier ul { margin: 0; padding: 0; list-style: none; }
+  .tier li { font-size: 14.2px; padding: 5px 0 5px 21px; position: relative; }
+  .tier li::before {
+    content: ""; position: absolute; left: 3px; top: 12px;
+    width: 6px; height: 6px; border-radius: 50%; background: var(--primary);
+  }
+  .support {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 24px; box-shadow: var(--shadow);
+  }
+  .support p:last-child { margin-bottom: 0; }
+  .mail { font-weight: 600; font-size: 17px; }
+  footer {
+    border-top: 1px solid var(--border); padding-top: 22px;
+    font-size: 13.5px; color: var(--muted-fg);
+  }
+  footer a { color: var(--muted-fg); }
 </style>
 </head>
 <body>
 <main>
-  <h1>Fahreddin Sevindir</h1>
-  <p>Mobile apps for iOS and Android.</p>
-  <ul>
-    <li><strong>Recur — Subscription Tracker</strong><br>
-      <a href="https://alidemirci2307.github.io/recur-subscription-tracker/">Privacy policy</a></li>
-  </ul>
+
+  <div class="mark">
+    <span>R</span>
+    <div>
+      <b>Recur</b>
+      <i>Subscription Tracker</i>
+    </div>
+  </div>
+
+  <h1>Know what your subscriptions really cost.</h1>
+  <p class="lede">
+    Recur is a calm subscription tracker for iPhone and Android. You add what you
+    pay for, it tells you the monthly and yearly total, and warns you before
+    anything renews. No bank connection, no account — everything stays on your phone.
+  </p>
+
+  <div class="stores">
+    <a href="https://apps.apple.com/app/id6776815153">Download on the App Store</a>
+    <a class="alt" href="https://play.google.com/store/apps/details?id=com.recur.app">Get it on Google Play</a>
+  </div>
+
+  <section>
+    <h2>What it does</h2>
+    <div class="grid">
+      <div class="item">
+        <h3>Your true monthly spend</h3>
+        <p>Every subscription rolled into one monthly and yearly figure, so the small ones stop hiding.</p>
+      </div>
+      <div class="item">
+        <h3>Warnings before renewal</h3>
+        <p>A reminder a few days ahead, at a time you choose — while cancelling is still easy.</p>
+      </div>
+      <div class="item">
+        <h3>Each currency on its own</h3>
+        <p>Totals are grouped per currency and shown in the amount you are actually billed. Recur never invents an exchange rate.</p>
+      </div>
+      <div class="item">
+        <h3>What you have stopped using</h3>
+        <p>Insights flags the subscriptions you marked as rarely used, so you can decide what to drop.</p>
+      </div>
+      <div class="item">
+        <h3>Yours, on your phone</h3>
+        <p>No sign-up and no server. Your list lives in the app; cloud backup, if you turn it on, writes to your own iCloud or Google Drive.</p>
+      </div>
+      <div class="item">
+        <h3>20 languages, light and dark</h3>
+        <p>Fully translated, with currency and language picked up from your device on first launch.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Free and Premium</h2>
+    <div class="tiers">
+      <div class="tier">
+        <h3>Free</h3>
+        <p class="price">Ad-supported</p>
+        <ul>
+          <li>Up to 10 subscriptions</li>
+          <li>Renewal reminders</li>
+          <li>The full Insights tab</li>
+        </ul>
+      </div>
+      <div class="tier paid">
+        <h3>Premium</h3>
+        <p class="price">Monthly, yearly or one-time — 7 days free on the subscriptions</p>
+        <ul>
+          <li>Unlimited subscriptions</li>
+          <li>No ads</li>
+          <li>Cloud backup and restore</li>
+          <li>Import and export your data</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Support</h2>
+    <div class="support">
+      <p>
+        Something broken, a missing currency, a translation that reads wrong, or a
+        question about your purchase — write to us and we will reply.
+      </p>
+      <p class="mail"><a href="mailto:fahreddinsevindir@gmail.com?subject=Recur%20support">fahreddinsevindir@gmail.com</a></p>
+      <p style="font-size:14px;color:var(--muted-fg)">
+        It helps to mention your device, whether you are on iOS or Android, and the
+        app version shown at the bottom of Settings.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      <a href="https://alidemirci2307.github.io/recur-subscription-tracker/">Privacy policy</a> ·
+      <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/">Terms of use</a>
+    </p>
+    <p>© 2026 Fahreddin Sevindir. Recur is available on the App Store and Google Play.</p>
+  </footer>
+
 </main>
 </body>
 </html>
