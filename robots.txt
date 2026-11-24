@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fahreddinsvndr.github.io/recur/sitemap.xml
+Sitemap: https://fahreddinsvndr.github.io/doqora/sitemap.xml
+Sitemap: https://fahreddinsvndr.github.io/flipvox/sitemap.xml
+Sitemap: https://fahreddinsvndr.github.io/liftset/sitemap.xml
+Sitemap: https://fahreddinsvndr.github.io/unscroll/sitemap.xml
